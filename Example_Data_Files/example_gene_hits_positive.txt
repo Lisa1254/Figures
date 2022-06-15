@@ -1,0 +1,2 @@
+"Screen 1"	"Screen 2"	"Screen 3"	"Screen 4"
+"TLK2"	0	1	0	0

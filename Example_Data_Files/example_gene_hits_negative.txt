@@ -1,0 +1,25 @@
+"Screen 1"	"Screen 2"	"Screen 3"	"Screen 4"
+"ANAPC13"	0	1	0	0
+"ANAPC4"	0	1	0	0
+"APC"	0	0	1	1
+"BLM"	0	1	0	1
+"CBLL1"	0	0	0	1
+"CDK2"	1	1	0	0
+"DSCC1"	0	1	0	0
+"FAF2"	1	0	0	0
+"GEN1"	0	0	0	1
+"HUS1"	0	1	0	0
+"PTEN"	0	0	0	1
+"RMI2"	0	1	0	1
+"RNASEH2A"	0	1	0	0
+"RNF25"	1	0	0	0
+"RTEL1"	0	1	0	1
+"SAE1"	0	0	0	1
+"SPOP"	1	1	1	1
+"UBE2H"	0	0	0	1
+"UBE2R2"	0	1	0	0
+"UCHL3"	0	0	1	0
+"USP14"	0	1	0	0
+"USP7"	1	1	0	1
+"USP9X"	1	0	0	0
+"VPS4A"	1	0	0	0

@@ -1,0 +1,26 @@
+"protein K11-linked ubiquitination"	"protein ubiquitination"	"protein polyubiquitination"	"proteasome-mediated ubiquitin-dependent protein catabolic process"	"ubiquitin-dependent protein catabolic process"	"negative regulation of proteasomal ubiquitin-dependent protein catabolic process"	"dna repair"
+"UCHL3"	0	1	0	0	1	0	0
+"VPS4A"	0	0	0	0	1	0	0
+"BLM"	0	0	0	0	0	0	1
+"UBE2R2"	0	1	1	0	1	0	0
+"CDK2"	0	0	0	1	1	0	0
+"SAE1"	0	1	0	0	0	0	0
+"RNASEH2A"	0	0	0	0	0	0	1
+"TLK2"	0	0	0	1	1	1	0
+"USP7"	0	1	0	1	1	1	1
+"FAF2"	0	0	0	1	1	0	0
+"USP14"	0	0	0	1	1	1	0
+"ANAPC4"	1	1	1	1	1	0	0
+"PTEN"	0	1	0	0	1	0	0
+"RNF25"	0	1	0	0	0	0	0
+"GEN1"	0	0	0	0	0	0	1
+"USP9X"	0	1	0	1	1	1	0
+"UBE2H"	1	1	1	1	1	0	0
+"DSCC1"	0	0	0	0	0	0	1
+"CBLL1"	0	1	0	0	0	0	0
+"HUS1"	0	0	0	0	0	0	1
+"RMI2"	0	0	0	0	0	0	1
+"SPOP"	0	1	1	1	1	0	0
+"ANAPC13"	1	1	1	1	1	0	0
+"APC"	0	0	0	1	1	0	0
+"RTEL1"	0	0	0	0	0	0	1
