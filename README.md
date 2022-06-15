@@ -9,5 +9,8 @@ Repository for code for common figures made in R for CRISPR analysis
     a. Ranking of single gene  
     b. Ranking of multiple genes  
     c. Ranking of gene with background colour highlight  
+3. Heatmap (using binary table)  
+    a. Basic Overlap Plot (gene/GO)  
+    b. Basic Overlap Plot (gene/Screen) aka FINGERPRINT PLOT  
   
   
