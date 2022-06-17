@@ -31,7 +31,7 @@ genes <- c("AACS", "AAMP", "AHNAK2", "ARMCX3", "ANGPT2")
 
 #Set up dataframe of rankings, with first row = "Max" or the circumference of the plot, and second row = "Min" or the centre of the plot
 # NOTE: here since the highest rank value is the minimum importance, we are putting the highest rank as the "Max" value.
-plot_data <- t(data.frame(Max = rep(1,5), Min = rep(max(gene_ranks),5)))
+plot_data <- t(data.frame(Circumference = rep(1,5), Centre = rep(max(gene_ranks),5)))
 colnames(plot_data) <- order_screens
 
 #For this to run, be sure that the order of screens is the same in both the gene_ranks and plot_data dataframes
