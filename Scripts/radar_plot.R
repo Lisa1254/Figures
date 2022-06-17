@@ -7,8 +7,11 @@
 
 ## Libraries & Functions ----
 
-library(fmsb)
-library(scales)
+library(fmsb) #Has radarchart function
+library(scales) #Allows transparency added to colors
+
+#Modification on radarchart source code to better suit the biological application
+source("Functions/radarchart_ca.R")
 
 #
 
@@ -31,7 +34,7 @@ genes <- c("AACS", "AAMP", "AHNAK2", "ARMCX3", "ANGPT2")
 
 #Set up dataframe of rankings, with first row = "Max" or the circumference of the plot, and second row = "Min" or the centre of the plot
 # NOTE: here since the highest rank value is the minimum importance, we are putting the highest rank as the "Max" value.
-plot_data <- t(data.frame(Max = rep(1,5), Min = rep(max(gene_ranks),5)))
+plot_data <- t(data.frame(Circumference = rep(1,5), Centre = rep(max(gene_ranks),5)))
 colnames(plot_data) <- order_screens
 
 #For this to run, be sure that the order of screens is the same in both the gene_ranks and plot_data dataframes
@@ -41,12 +44,13 @@ for  (g in genes) {
 }
 rownames(plot_data)[-c(1,2)] <- genes
 
+#If using fmsb radarchart function, best to use a log scale
 plot_data_log <- log10(plot_data)
 
 
 #
 
-## Plot Single Gene ----
+## Plot Single Gene (Log Values, using fmsb radarchart function) ----
 
 #Identify which gene will be plotted (index by row number of plot_data_log, so should be 3 or greater)
 gene_ind <- 3
@@ -97,7 +101,7 @@ radarchart(plot_data_log[c(1,2,gene_ind),],
 
 #
 
-## Plot multiple genes ----
+## Plot multiple genes (Log Values, using fmsb radarchart function) ----
 
 #Using above data and arguments, add more rows to the df input of the plot function. It is not recommended to plot more than 2-3 data types on a single plot because it gets confusing
 
@@ -133,7 +137,7 @@ radarchart(plot_data_log[c(1,2,gene_ind1, gene_ind2),],
 
 
 #
-## Plot with high rank highlight ----
+## Plot with high rank highlight (Log Values, using fmsb radarchart function) ----
 
 #Add row to plot for highlight data
 #Choosing for HL the inner 4 sections with gray, outermost section left white. Taking formula from above for calculating axis labels
@@ -172,3 +176,46 @@ radarchart(plot_data_h_log[c(1:3,gene_ind),],
            
            
 )
+
+#
+
+## Single Gene using Custom Axis fuction ----
+
+radarchart_ca(plot_data[3,],
+              axistype=1,
+              num_ax=c(1500,400,100,10,1),
+              title = rownames(plot_data)[3],
+              pcol="darkgreen" , 
+              pfcol=scales::alpha("lightgreen", 0.3), 
+              plty=1,
+              cglcol="navy",
+              axislabcol="blue",
+              cglwd=1, vlcex=0.8, calcex=0.8
+)
+
+#
+
+## Plot multiple genes using Custom Axis function ----
+
+radarchart_ca(plot_data[3:4,],
+              axistype=1, 
+              num_ax=c(1500,400,100,10,1),
+              title = paste0(rownames(plot_data)[3], " & ", rownames(plot_data)[4]),
+              pcol=c("darkorange4", "darkblue"), 
+              pfcol=c(scales::alpha("darkorange", 0.3), scales::alpha("blue", 0.3)), 
+              plty=1,
+              cglcol="navy",
+              axislabcol="blue",
+              cglwd=1, vlcex=0.8, calcex=0.8
+)
+
+legend(x = "bottomleft",
+       legend = c(rownames(plot_data)[3], rownames(plot_data)[4]), # Vector with the name of each group
+       #fill = c(scales::alpha("darkorange", 0.3), scales::alpha("blue", 0.3)),   # Creates boxes in the legend with the specified colors
+       col = c("darkorange4", "darkblue"),
+       lty='solid',
+       pch=19,
+       title = "Gene")
+
+
+#
