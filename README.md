@@ -21,7 +21,7 @@ Repository for code for common figures made in R for CRISPR analysis
 2. radarchart_ca: modification of radarchart from fmsb to allow for custom axis and grid background highlighting to better demonstrate biological significance  
   
 ## Currently Working on
-  
+* Adding script for a figure that compares two types of scores at a given series of points, where each score type has a different scale.  
   
 ## To Do
 * Add annotation sections for heatmap  
