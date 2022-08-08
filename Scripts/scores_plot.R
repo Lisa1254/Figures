@@ -37,6 +37,7 @@ end_pos <- 100
 #Data here is taken as a subsection of real protein data used in the lab, but with the amino acids changed
 f_scores <- read.delim("Example_Data_Files/example_protein_functionalScores.txt")
 ddg_scores <- read.delim("Example_Data_Files/example_protein_ddGScores.txt")
+#Note, add following arguments if necessary: header = FALSE, col.names = c("hgvs_pro", "score")
 
 #Separate initial residue, position, final residue from mutation code. 
 #The functional score data is in hgvs nomenclature
@@ -83,7 +84,7 @@ seq(start_pos,end_pos)[-which(seq(start_pos,end_pos) %in% unique(ddg_scores_plot
 
 ## Plot Using Rolling Mean ----
 
-#If using rolling window for the mean, define window
+#Define window
 window = 5
 space_padding = (window-1)/2
 #Get rolling mean values
@@ -161,90 +162,46 @@ ggplot(ggdf.Scores, mapping = aes(x=num)) +
 #
 ## Scatterplot Correlation ----
 
-#
-#This hasn't been edited yet, and is just pasted from my prev work to generalize for use here
-#
+#Combine the ddg_scores and f_scores into a single dataframe using preferred mutation code format for labels.
+#Here I'll be using 3-letter amino acid code, position, one letter amino acid code.
+aa1 <- c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y")
+aa3<- c("ALA", "CYS", "ASP", "GLU", "PHE", "GLY", "HIS", "ILE", "LYS", "LEU", "MET", "ASN", "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR")
 
-#Scatterplot of all variants ddG & functional score
-
-library(stringr)
-library(plyr)
-library(dplyr)
-library(ggplot2)
-
-# Import functional scores
-f_scores <- read.csv("GNB1L_functional scores.csv")
-
-#Separate initial residue, position, final residue from mutation code
-#This uses strsplit and strextract commands and the positional digits
-#In this data chart, all mutation codes begin with "p." so that needs to be removed
-ir_f <- unlist(lapply(f_scores[,1], function(x){gsub("p.", "", strsplit(x, "[[:digit:]]+")[[1]][1])}))
-fr_f <- unlist(lapply(f_scores[,1], function(x){strsplit(x, "[[:digit:]]+")[[1]][2]}))
-pos_f <- unlist(lapply(f_scores[,1], function(x){str_extract(x, "[[:digit:]]+")}))
-
-#Add separated information to dataframe
-f_scores <- cbind(f_scores, ir=ir_f, pos=as.numeric(pos_f), fr=fr_f)
-
-# Import ddG scores
-ddg_scores <- read.delim("GNB1L_foldX_output_add227.txt", col.names=c("Mutation", "score"))
-
-split_mutation_string <- function(df, col, nchar1, nchar2, chain=FALSE) {
-  ir <- substr(df[,col], 1, nchar1)
-  fr <- substr(df[,col], nchar(df[,col])- nchar2 + 1, nchar(df[,col]))
-  if (chain == TRUE) {
-    pos <- as.numeric(substr(df[,col], nchar1+2, nchar(df[,col])-nchar2))
-  } else {
-    pos <- as.numeric(substr(df[,col], nchar1+1, nchar(df[,col])-nchar2))
-  }
-  df <- cbind(df, ir, pos, fr)
-  return(df)
-}
-
-#Use on ddg table
-ddg_scores <- split_mutation_string(ddg_scores, 1, 3, 1, chain=TRUE)
-
-#Remove self comparisons in odd H residues (copied from moving window script, but may not be necessary here)
-rows2del <- ddg_scores %>%
-  filter(ir %in% c("HIS", "H1S", "H2S")) %>%
-  filter(fr %in% c("H", "e", "o")) %>%
-  pull(Mutation)
-
-ddg_scores <- ddg_scores[-which(ddg_scores$Mutation %in% rows2del),]
-
-#Get plotting data
-
-#Make common mutation code for 2 types of input
-
-aa1 <- c('G', 'A', 'L', 'V', 'I', 'P', 'R', 'T', 'S', 'C', 'M', 'K', 'E', 'Q', 'D', 'N', 'W', 'Y', 'F', 'H')
-aa3<- c('GLY', 'ALA', 'LEU', 'VAL', 'ILE', 'PRO', 'ARG', 'THR', 'SER', 'CYS', 'MET', 'LYS', 'GLU', 'GLN', 'ASP', 'ASN', 'TRP', 'TYR', 'PHE', 'HIS')
-
-map_fr_fun <- mapvalues(toupper(f_scores$fr), aa3, aa1)
+#Map 3 letter code in "fr" column of functional scores to 1 letter code
+map_fr_fun <- plyr::mapvalues(toupper(f_scores$fr), aa3, aa1)
+#Map 1 letter code in "ir" column of ddg scores to 3 letter code
+map_ir_ddg <- plyr::mapvalues(ddg_scores$ir, aa1, aa3)
 
 f_scores$mutation_code <- paste0(toupper(f_scores$ir), f_scores$pos, map_fr_fun)
-ddg_scores$mutation_code <- paste0(ddg_scores$ir, ddg_scores$pos, ddg_scores$fr)
+ddg_scores$mutation_code <- paste0(map_ir_ddg, ddg_scores$pos, ddg_scores$fr)
 
+#Merge scores by mutation code, only retains mutations with data in both inputs
 merge_scores <- merge(f_scores[,c("mutation_code", "score")], ddg_scores[,c("mutation_code", "score")], by = "mutation_code")
 colnames(merge_scores)[c(2,3)] <- c("f_score", "ddg_score")
 
-ggplot(merge_scores, mapping = aes(x=f_score, y=ddg_score)) +
-  geom_point()
+#From here I saved the dataframe as txt file to explore in my plot labelling shiny so that it was easy to identify which mutations met different thresholds, or to locate the scores of a specific mutation.
+#As an example of what that exploration might produce, a scatterplot is demonstrated below
 
-write.table(merge_scores, file = "Rolling_window_analysis/commonScores_func_ddg.txt", sep = "\t")
-
-#Using instead
-f_scores2 <- read.csv("Rolling_window_analysis/GNB1L_GFP_scores.csv", comment.char = "#")
-#Modifications done as above, but in different window
-
-map_fr2_fun <- mapvalues(toupper(f_scores2$fr), aa3, aa1)
-f_scores2$mutation_code <- paste0(toupper(f_scores2$ir), f_scores2$pos, map_fr2_fun)
-
-merge_scores2 <- merge(f_scores2[,c("mutation_code", "score")], ddg_scores[,c("mutation_code", "score")], by = "mutation_code")
-colnames(merge_scores2)[c(2,3)] <- c("f_score2", "ddg_score")
-
-ggplot(merge_scores2, mapping = aes(x=ddg_score, y=f_score2)) +
+#Preview shape of plot:
+ggplot(merge_scores, mapping = aes(x=ddg_score, y=f_score)) +
   geom_point() +
   scale_y_continuous(trans = "reverse")
 
-write.table(merge_scores2, file = "Rolling_window_analysis/commonScores_funcGFP_ddg.txt", sep = "\t")
+#Set minimum ddG score for labelling: 
+ddg_min <- 30
+#Set maximum Functional score for labelling:
+fun_max <- 0
+
+#Choosing to label if a point meets either threshold, rather than both
+merge_scores$label <- ifelse((merge_scores$ddg_score >= ddg_min) | (merge_scores$f_score <= fun_max),"Yes", "No")
+
+#Also in preview noticed an outlier at f_score > 3, adding that to the labelling set
+merge_scores[which(merge_scores$f_score > 3), "label"] <- "Yes"
+
+#In progress, updating this figure
+ggplot(merge_scores, mapping = aes(x=ddg_score, y=f_score)) +
+  geom_point(aes(color=label)) +
+  color_manual() +
+  scale_y_continuous(trans = "reverse")
 
 
