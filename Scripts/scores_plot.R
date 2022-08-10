@@ -13,6 +13,7 @@ library(dplyr) #for manipulating dataframes
 library(stringr) #for extracting string information (in functions)
 library(zoo) #for rolling mean used in plot
 library(ggplot2) #for plot
+library(ggrepel) #for scatterplot labels
 
 #Functions
 source("Functions/parse_mutStrings.R")
@@ -201,7 +202,10 @@ merge_scores[which(merge_scores$f_score > 3), "label"] <- "Yes"
 #In progress, updating this figure
 ggplot(merge_scores, mapping = aes(x=ddg_score, y=f_score)) +
   geom_point(aes(color=label)) +
-  color_manual() +
-  scale_y_continuous(trans = "reverse")
+  scale_color_manual(values = c("gray","steelblue")) +
+  scale_y_continuous(trans = "reverse") +
+  geom_text_repel(aes(label = ifelse(label == "Yes", mutation_code, "")), size = 2.5, max.overlaps = 25, min.segment.length = 0) +
+  theme(legend.position = "none") +
+  labs(x="ddG Score", y="Functional Score")
 
 
